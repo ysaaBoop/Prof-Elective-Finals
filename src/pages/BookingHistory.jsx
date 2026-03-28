@@ -8,17 +8,10 @@ function BookingHistory({ user }) {
   useEffect(() => {
     if (user) {
       fetchBookingHistory();
-    } else {
-      setBookings([]);
-      setMessage('');
     }
   }, [user]);
 
   async function fetchBookingHistory() {
-    if (!user) return;
-
-    setMessage('Loading booking history...');
-
     const { data: bookingsData, error: bookingsError } = await supabase
       .from('bookings')
       .select('*')
@@ -26,7 +19,6 @@ function BookingHistory({ user }) {
       .order('id', { ascending: false });
 
     if (bookingsError) {
-      setBookings([]);
       setMessage('Error loading bookings: ' + bookingsError.message);
       return;
     }
@@ -36,16 +28,12 @@ function BookingHistory({ user }) {
       .select('*');
 
     if (roomsError) {
-      setBookings([]);
       setMessage('Error loading rooms: ' + roomsError.message);
       return;
     }
 
-    const safeBookings = bookingsData || [];
-    const safeRooms = roomsData || [];
-
-    const bookingsWithRoomNames = safeBookings.map((booking) => {
-      const room = safeRooms.find((room) => room.id === booking.room_id);
+    const bookingsWithRoomNames = (bookingsData || []).map((booking) => {
+      const room = roomsData.find((room) => room.id === booking.room_id);
 
       return {
         ...booking,
@@ -55,6 +43,25 @@ function BookingHistory({ user }) {
 
     setBookings(bookingsWithRoomNames);
     setMessage('');
+  }
+
+  async function handleCancelBooking(bookingId) {
+    const confirmed = window.confirm('Are you sure you want to cancel this booking?');
+
+    if (!confirmed) return;
+
+    const { error } = await supabase
+      .from('bookings')
+      .update({ status: 'cancelled' })
+      .eq('id', bookingId);
+
+    if (error) {
+      setMessage('Error cancelling booking: ' + error.message);
+      return;
+    }
+
+    setMessage('Booking cancelled successfully.');
+    fetchBookingHistory();
   }
 
   if (!user) {
@@ -72,18 +79,29 @@ function BookingHistory({ user }) {
 
       {message && <div className="message-box">{message}</div>}
 
-      {!message && bookings.length === 0 ? (
+      {bookings.length === 0 ? (
         <p className="empty-text">No bookings found.</p>
       ) : (
         <div className="list-stack">
           {bookings.map((booking) => (
             <div key={booking.id} className="history-card">
-              <div className="history-header">{booking.room_name}</div>
+              <div className="history-header">
+                {booking.room_name}
+              </div>
 
               <div className="history-body">
                 <p><strong>Check-in:</strong> {booking.check_in_date}</p>
                 <p><strong>Check-out:</strong> {booking.check_out_date}</p>
                 <p><strong>Status:</strong> {booking.status}</p>
+
+                {booking.status !== 'cancelled' && (
+                  <button
+                    className="danger-btn"
+                    onClick={() => handleCancelBooking(booking.id)}
+                  >
+                    Cancel Booking
+                  </button>
+                )}
               </div>
             </div>
           ))}
