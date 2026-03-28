@@ -39,11 +39,6 @@ function Home({ user, handleLogout, isAdmin }) {
     'Superior Room': [superior1, superior2, superior3, superior4],
   };
 
-  const formatPrice = (price) => {
-    const numericPrice = Number(price || 0);
-    return numericPrice.toLocaleString('en-PH');
-  };
-
   useEffect(() => {
     fetchRooms();
   }, []);
@@ -240,7 +235,7 @@ function Home({ user, handleLogout, isAdmin }) {
                   <p className="room-desc">{room.description}</p>
 
                   <div className="room-meta">
-                    <span>Price: ₱{formatPrice(room.price)}</span>
+                    <span>Price: ₱{room.price}</span>
                     <span>Capacity: {room.capacity}</span>
                   </div>
 
@@ -283,19 +278,6 @@ function Home({ user, handleLogout, isAdmin }) {
               </div>
 
               <div className="form-actions">
-                <button
-                  className="secondary-btn"
-                  type="button"
-                  onClick={() => {
-                    setSelectedRoom(null);
-                    setCheckIn('');
-                    setCheckOut('');
-                    setMessage('');
-                  }}
-                >
-                  Back
-                </button>
-
                 <button className="primary-btn" type="submit">
                   Confirm Booking
                 </button>
