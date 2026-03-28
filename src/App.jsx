@@ -228,7 +228,7 @@ function Home({ user, handleLogout, isAdmin }) {
                   <p className="room-desc">{room.description}</p>
 
                   <div className="room-meta">
-                    <span>Price: ₱{room.price}</span>
+                    <span>Price: ₱{Number(room.price).toLocaleString('en-PH')}</span>
                     <span>Capacity: {room.capacity}</span>
                   </div>
 
