@@ -215,14 +215,7 @@ function Home({ user, handleLogout, isAdmin }) {
               <div key={room.id} className="room-card">
                 <div className="room-slider">
                   <div className="room-track">
-                    {(
-                      roomImages[room.name] || [
-                        background,
-                        background,
-                        background,
-                        background,
-                      ]
-                    ).map((image, index) => (
+                    {(roomImages[room.name] || [background, background, background, background]).map((image, index) => (
                       <div key={index} className="room-slide">
                         <img src={image} alt={`${room.name} ${index + 1}`} />
                       </div>
@@ -260,20 +253,12 @@ function Home({ user, handleLogout, isAdmin }) {
               <div className="form-grid">
                 <div className="form-group">
                   <label>Check-in Date</label>
-                  <input
-                    type="date"
-                    value={checkIn}
-                    onChange={(e) => setCheckIn(e.target.value)}
-                  />
+                  <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
                 </div>
 
                 <div className="form-group">
                   <label>Check-out Date</label>
-                  <input
-                    type="date"
-                    value={checkOut}
-                    onChange={(e) => setCheckOut(e.target.value)}
-                  />
+                  <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
                 </div>
               </div>
 
@@ -323,27 +308,12 @@ function App() {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <Home
-            user={user}
-            handleLogout={handleLogout}
-            isAdmin={isAdmin}
-          />
-        }
-      />
+      <Route path="/" element={<Home user={user} handleLogout={handleLogout} isAdmin={isAdmin} />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/history" element={<BookingHistory user={user} />} />
-      <Route
-        path="/admin/rooms"
-        element={isAdmin ? <AdminRooms /> : <p>Access denied</p>}
-      />
-      <Route
-        path="/admin/bookings"
-        element={isAdmin ? <AdminBookings /> : <p>Access denied</p>}
-      />
+      <Route path="/admin/rooms" element={isAdmin ? <AdminRooms /> : <p>Access denied</p>} />
+      <Route path="/admin/bookings" element={isAdmin ? <AdminBookings /> : <p>Access denied</p>} />
     </Routes>
   );
 }
